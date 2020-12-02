@@ -12,10 +12,13 @@ function useQuery() {
 function Prayer() {
 
   const [ darkMode, setDarkMode ] = useState(true);
+  const [ isLoading, setLoading ] = useState(false);
 
   const [ hasError, setErrors ] = useState(false);
   const [ data, setData ] = useState([]);
   const [ today, setToday ] = useState(1);
+  const [ time, setTime ] = useState('00:00');
+
 
   const [ prayerTimes, setPrayerTimesData ] = useState({
     fajr : '',
@@ -32,6 +35,7 @@ function Prayer() {
   var date = new Date();
 
   async function fetchData() {
+    setLoading(true);
     const res = await axios.get('http://api.aladhan.com/v1/calendarByCity?city=Zhongli&country=Taiwan&method=2&month=12&year=2020')
       .then(res => {
         setData(res.data.data)
@@ -52,10 +56,14 @@ function Prayer() {
           midnight: data.timings.Midnight
         })
 
+        setLoading(false);
         console.log(prayerTimes)
 
       })
-      .catch(err => setErrors(err))
+      .catch(err => {
+        setLoading(false);
+        setErrors(err)
+      })
   }
 
   useEffect(() => {
@@ -68,48 +76,51 @@ function Prayer() {
   return (
     <div className={`flex flex-col h-screen ${darkMode ? 'dark' : ''}`}>
       <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900 dark:text-white items-center">
+        <div className="animate-pulse">
+          {time}
+        </div>
         {/*Date {today}*/}
         {/*{query.get("location")}*/}
         {/*{data==={} ? '' : (JSON.stringify(prayerTimes))}*/}
         <div className={"flex flex-col font-bold text-3xl justify-center align-center flex-grow-0 w-64 my-auto"}>
-          <div className={"flex flex-row flex-grow-0 items-center"}>
+          <div className={"flex flex-row flex-grow-0 p-2"}>
             <div className={"flex flex-1"}>
               Fajr
             </div>
             <div className={"flex flex-1 justify-center"} >
-              {prayerTimes.fajr.substr(0,5)}
+              { isLoading ? (<div className="animate-pulse">00:00</div>) :(prayerTimes.fajr.substr(0,5))}
             </div>
           </div>
-          <div className={"flex flex-row flex-grow-0"}>
+          <div className={"flex flex-row flex-grow-0 p-2"}>
             <div className={"flex flex-1"}>
               Dhur
             </div>
             <div className={"flex flex-1 justify-center"}>
-              {prayerTimes.dhur.substr(0,5)}
+              { isLoading ? (<div className="animate-pulse">00:00</div>) :(prayerTimes.dhur.substr(0,5))}
             </div>
           </div>
-          <div className={"flex flex-row flex-grow-0"}>
+          <div className={"flex flex-row flex-grow-0 p-2"}>
             <div className={"flex flex-1"}>
               Asr
             </div>
             <div className={"flex flex-1 justify-center"}>
-              {prayerTimes.asr.substr(0,5)}
+              { isLoading ? (<div className="animate-pulse">00:00</div>) :(prayerTimes.asr.substr(0,5))}
             </div>
           </div>
-          <div className={"flex flex-row flex-grow-0"}>
+          <div className={"flex flex-row flex-grow-0 p-2"}>
             <div className={"flex flex-1"}>
               Maghrib
             </div>
             <div className={"flex flex-1 justify-center"}>
-              {prayerTimes.maghrib.substr(0,5)}
+              { isLoading ? (<div className="animate-pulse">00:00</div>) :(prayerTimes.maghrib.substr(0,5))}
             </div>
           </div>
-          <div className={"flex flex-row flex-grow-0"}>
+          <div className={"flex flex-row flex-grow-0 p-2"}>
             <div className={"flex flex-1"}>
               Isya
             </div>
             <div className={"flex flex-1 justify-center"}>
-              {prayerTimes.isha.substr(0,5)}
+              { isLoading ? (<div className="animate-pulse">00:00</div>) :(prayerTimes.isha.substr(0,5))}
             </div>
           </div>
         </div>
